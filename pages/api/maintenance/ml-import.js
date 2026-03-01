@@ -358,8 +358,6 @@ async function fetchProduct(itemId, token) {
     available_quantity: data.available_quantity || 0,
     published,
     permalink,
-    import_source: 'mercadolibre',
-    import_date: new Date().toISOString(),
   };
 }
 
@@ -496,43 +494,21 @@ export default async function handler(req, res) {
 
     const { db } = await connectToDatabase();
     const collection = db.collection('products');
-
-    // Sin timestamps para evitar problemas con Date objects
-    // Agregar timestamps de BD
-    const now = new Date();
-    for (const p of validProducts) {
-      p.imported_at = now;
-      if (!p.created_at) p.created_at = now;
-      p.updated_at = now;
-      p.status = 'available';
-    }
-
-    // Intentar guardar uno por uno a través del endpoint PUT /api/items/:id
-    // que tiene sanitización
-    const API_BASE = process.env.API_BASE_URL || 'http://localhost:3000';
+    
     let inserted = 0;
+    let modified = 0;
     for (const p of validProducts) {
       try {
-        const res = await fetch(`${API_BASE}/api/items/${p.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(p)
-        });
-        if (res.ok) inserted++;
-        else console.warn(`  ⚠️ Error guardando ${p.id}:`, res.status, await res.text());
+        const result = await collection.replaceOne({ id: p.id }, p, { upsert: true });
+        if (result.upsertedCount) inserted++;
+        if (result.modifiedCount) modified++;
       } catch (err) {
         console.warn(`  ⚠️ Error guardando ${p.id}:`, err.message);
       }
     }
     results.upserted = inserted;
-    console.log(`✅ ${inserted} productos guardados`);
-
-    // Asegurar índice
-    try {
-      await collection.createIndex({ id: 1 }, { unique: true, sparse: true });
-    } catch {
-      // Índice ya existe
-    }
+    results.modified = modified;
+    console.log(`✅ ${inserted} productos insertados, ${modified} modificados`);
 
     // Agregar productos procesados al resultado
     results.products = validProducts.map((p) => ({
