@@ -82,7 +82,6 @@ export default async function handler(req, res) {
         // Return what we received for debugging
         console.log('PUT body received:', JSON.stringify(body));
         body.id = id;
-        body.updated_at = new Date();
         await collection.replaceOne({ id }, body, { upsert: true });
         return res.status(200).json({ success: true, received: body });
     }
@@ -95,7 +94,6 @@ export default async function handler(req, res) {
         }
         const existing = await collection.findOne({ id });
         if (!existing) return res.status(404).json({ error: 'No encontrado' });
-        body.updated_at = new Date();
         await collection.updateOne({ id }, { $set: body });
         return res.status(200).json({ success: true, message: 'Actualizado' });
     }

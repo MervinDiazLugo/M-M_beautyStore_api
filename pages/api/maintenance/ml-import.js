@@ -1,10 +1,11 @@
 // pages/api/maintenance/ml-import.js
-// POST: Recibe IDs de MercadoLibre, scrapea la API de ML, normaliza y guarda en MongoDB
+// POST: Recibe IDs de MercadoLibre, scrapea la API de ML, normaliza y guarda en Supabase
 //
 // Uso:
 //   POST /api/maintenance/ml-import
 //   Body: { "ids": ["MLA1510055959", "MLA1519662745", ...] }
 //
+
 
 import { connectToDatabase } from '../../../lib/db';
 
@@ -490,8 +491,8 @@ export default async function handler(req, res) {
       });
     }
 
-    // ─── Insertar en MongoDB ───
-    console.log(`\n📝 Guardando ${validProducts.length} productos en MongoDB...`);
+    // ─── Insertar en Supabase ───
+    console.log(`\n📝 Guardando ${validProducts.length} productos en Supabase...`);
 
     const { db } = await connectToDatabase();
     const collection = db.collection('products');
