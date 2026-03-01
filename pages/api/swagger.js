@@ -1,5 +1,9 @@
-﻿// pages/api/swagger.js
+// pages/api/swagger.js
 export default function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET');
+  res.setHeader('Content-Type', 'text/html');
+  
   const html = `<!DOCTYPE html>
 <html>
 <head>
@@ -24,6 +28,5 @@ export default function handler(req, res) {
   </script>
 </body>
 </html>`;
-  res.setHeader('Content-Type', 'text/html');
   res.status(200).send(html);
 }

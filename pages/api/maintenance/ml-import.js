@@ -6,7 +6,7 @@
 //   Body: { "ids": ["MLA1510055959", "MLA1519662745", ...] }
 //
 
-import { connectToDatabase } from '../../../lib/mongodb';
+import { connectToDatabase } from '../../../lib/db';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CONFIGURACIÓN ML API

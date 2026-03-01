@@ -1,7 +1,7 @@
 // pages/api/maintenance/cleanup.js
 // DELETE: Elimina la colección completamente
 
-import { connectToDatabase } from '../../../lib/mongodb';
+import { connectToDatabase } from '../../../lib/db';
 
 export default async function handler(req, res) {
   if (req.method !== 'DELETE') {

@@ -1,6 +1,6 @@
 // pages/api/maintenance/import.js
 // POST: Importar productos desde scraper de Mercado Libre
-import { connectToDatabase } from '../../../lib/mongodb';
+import { connectToDatabase } from '../../../lib/db';
 
 function sanitizeObject(obj, depth = 0) {
   if (depth > 20) return obj;

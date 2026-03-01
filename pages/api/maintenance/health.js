@@ -1,6 +1,6 @@
 // pages/api/maintenance/health.js
 // GET: Verificar salud de la BD
-import { connectToDatabase } from '../../../lib/mongodb';
+import { connectToDatabase } from '../../../lib/db';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {

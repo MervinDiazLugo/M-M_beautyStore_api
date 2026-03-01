@@ -1,5 +1,5 @@
 // pages/api/items/index.js
-import { connectToDatabase } from '../../../lib/mongodb';
+import { connectToDatabase } from '../../../lib/db';
 import fs from 'fs';
 import path from 'path';
 

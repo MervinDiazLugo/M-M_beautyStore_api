@@ -1,5 +1,5 @@
 // pages/api/items/[id].js
-import { connectToDatabase } from '../../../lib/mongodb';
+import { connectToDatabase } from '../../../lib/db';
 
 function sanitizeString(str) {
     if (typeof str !== 'string' || !str) return str;
