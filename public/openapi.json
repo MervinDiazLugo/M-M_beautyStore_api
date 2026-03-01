@@ -1,0 +1,469 @@
+﻿{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Products CRUD API",
+    "version": "1.0.0",
+    "description": "API CRUD para arti­culos (productos). Endpoints: /api/items y /api/items/{id}"
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "paths": {
+    "/api/items": {
+      "get": {
+        "summary": "Listar arti­culos",
+        "responses": {
+          "200": {
+            "description": "Lista de arti­culos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Crear arti­culo",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Creado"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "409": {
+            "description": "ID ya existe"
+          }
+        }
+      }
+    },
+    "/api/items/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Obtener arti­culo por id",
+        "responses": {
+          "200": {
+            "description": "Arti­culo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No encontrado"
+          }
+        }
+      },
+      "put": {
+        "summary": "Reemplazo completo del arti­culo",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reemplazado"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Actualizacion parcial del arti­culo",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Actualizado"
+          },
+          "404": {
+            "description": "No encontrado"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Eliminar arti­culo",
+        "responses": {
+          "204": {
+            "description": "Eliminado"
+          },
+          "404": {
+            "description": "No encontrado"
+          }
+        }
+      }
+    },
+    "/api/maintenance/ml-import": {
+      "post": {
+        "summary": "Importar productos de Mercado Libre por IDs",
+        "description": "Recibe IDs de MercadoLibre, scrapea la API de ML (autenticación OAuth automática), normaliza los datos y los guarda directamente en MongoDB.",
+        "tags": [
+          "Maintenance"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "ids"
+                ],
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "description": "Lista de IDs de MercadoLibre a importar",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "MLA1510055959",
+                      "MLA1519662745",
+                      "MLA2305015168"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Importación exitosa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Importación completada: 3/3 productos"
+                    },
+                    "results": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer",
+                          "description": "Total de IDs recibidos"
+                        },
+                        "success": {
+                          "type": "integer",
+                          "description": "Productos scrapeados correctamente"
+                        },
+                        "failed": {
+                          "type": "integer",
+                          "description": "Productos que fallaron"
+                        },
+                        "upserted": {
+                          "type": "integer",
+                          "description": "Nuevos en la BD"
+                        },
+                        "modified": {
+                          "type": "integer",
+                          "description": "Actualizados en la BD"
+                        },
+                        "errors": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "error": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "products": {
+                          "type": "array",
+                          "description": "Productos procesados e importados",
+                          "items": {
+                            "$ref": "#/components/schemas/Product"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "IDs inválidos o sin productos válidos"
+          },
+          "500": {
+            "description": "Error de servidor o credenciales ML faltantes"
+          }
+        }
+      }
+    },
+    "/api/maintenance/import": {
+      "post": {
+        "summary": "Importar productos JSON genérico",
+        "description": "Importa datos JSON con sanitización UTF-8 automática. Compatible con cualquier fuente.",
+        "tags": [
+          "Maintenance"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Importación completada"
+          },
+          "400": {
+            "description": "Datos requeridos"
+          },
+          "500": {
+            "description": "Error servidor"
+          }
+        }
+      }
+    },
+    "/api/maintenance/health": {
+      "get": {
+        "summary": "Verificar salud de BD",
+        "description": "Verifica integridad y disponibilidad de la base de datos.",
+        "tags": [
+          "Maintenance"
+        ],
+        "responses": {
+          "200": {
+            "description": "BD operativa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "database": {
+                      "type": "string"
+                    },
+                    "collection": {
+                      "type": "string"
+                    },
+                    "count": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error conexión BD"
+          }
+        }
+      }
+    },
+    "/api/maintenance/cleanup": {
+      "delete": {
+        "summary": "Eliminar colección completamente",
+        "description": "Hace DROP completo de la colección 'products'. CUIDADO: Esta acción es irreversible.",
+        "tags": [
+          "Maintenance"
+        ],
+        "responses": {
+          "200": {
+            "description": "Colección eliminada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Colección \"products\" eliminada completamente"
+                    },
+                    "note": {
+                      "type": "string",
+                      "example": "La próxima importación creará la colección limpia"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error al eliminar colección"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Product": {
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "MLA1510055959"
+          },
+          "name": {
+            "type": "string",
+            "example": "Serum De Pestai±as Crecimiento Y Nutricion Bioaqua"
+          },
+          "ml_price": {
+            "type": "number",
+            "example": 7105
+          },
+          "price": {
+            "type": "number",
+            "example": 6114
+          },
+          "precio_mayorista": {
+            "type": "number",
+            "example": 4891
+          },
+          "cantidad_minima_mayorista": {
+            "type": "integer",
+            "example": 18
+          },
+          "cantidad_vendida": {
+            "type": "integer",
+            "example": 1043
+          },
+          "sold_quantity_real": {
+            "type": "integer",
+            "example": 118
+          },
+          "desc": {
+            "type": "string"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "image": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "envioGratis": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string"
+          },
+          "features": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "specifications": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "mercadoLibreUrl": {
+            "type": "string"
+          },
+          "brand": {
+            "type": "string"
+          },
+          "condition": {
+            "type": "string"
+          },
+          "sold_quantity": {
+            "type": "integer"
+          },
+          "available_quantity": {
+            "type": "integer"
+          },
+          "published": {
+            "type": "boolean"
+          },
+          "permalink": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

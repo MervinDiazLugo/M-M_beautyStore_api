@@ -1,0 +1,23 @@
+{
+  "name": "my-beauty-store-api",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "maintenance": "cross-env NODE_OPTIONS=\"--no-deprecation\" node scripts/maintenance.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.97.0",
+    "dotenv": "^16.1.4",
+    "mongodb": "^5.9.0",
+    "next": "^16.1.6",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0"
+  }
+}
