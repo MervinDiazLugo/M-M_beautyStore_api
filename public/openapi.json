@@ -484,6 +484,100 @@
         "name": "x-api-key",
         "description": "API Key de seguridad. Agregar en header: x-api-key: TU_KEY"
       }
+    },
+    "schemas": {
+      "Product": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "price",
+          "sku",
+          "published"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "MLA1510055959"
+          },
+          "name": {
+            "type": "string",
+            "example": "Serum De Pestañas"
+          },
+          "ml_price": {
+            "type": "number",
+            "example": 7105
+          },
+          "price": {
+            "type": "number",
+            "example": 6114
+          },
+          "precio_mayorista": {
+            "type": "number",
+            "example": 4891
+          },
+          "cantidad_minima_mayorista": {
+            "type": "integer",
+            "example": 18
+          },
+          "cantidad_vendida": {
+            "type": "integer",
+            "example": 1043
+          },
+          "sold_quantity_real": {
+            "type": "integer",
+            "example": 118
+          },
+          "desc": {
+            "type": "string"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "image": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "envioGratis": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string"
+          },
+          "features": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "specifications": {
+            "type": "object"
+          },
+          "mercadoLibreUrl": {
+            "type": "string"
+          },
+          "brand": {
+            "type": "string"
+          },
+          "condition": {
+            "type": "string"
+          },
+          "sold_quantity": {
+            "type": "integer"
+          },
+          "available_quantity": {
+            "type": "integer"
+          },
+          "published": {
+            "type": "boolean"
+          },
+          "permalink": {
+            "type": "string"
+          }
+        }
+      }
     }
   }
 }
