@@ -3,22 +3,18 @@
   "info": {
     "title": "Products CRUD API",
     "version": "1.0.0",
-    "description": "API CRUD para artículos (productos). Requiere header x-api-key en operaciones de escritura."
+    "description": "API para gestión de productos. Endpoints públicos: GET. Endpoints protegidos requieren header x-api-key."
   },
   "servers": [
     {
       "url": "/"
     }
   ],
-  "security": [
-    {
-      "ApiKeyAuth": []
-    }
-  ],
   "paths": {
     "/api/items": {
       "get": {
-        "summary": "Listar artículos",
+        "summary": "Listar artículos (PÚBLICO)",
+        "security": [],
         "responses": {
           "200": {
             "description": "Lista de artículos",
@@ -477,6 +473,16 @@
             "type": "string"
           }
         }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key",
+        "description": "API Key de seguridad. Agregar en header: x-api-key: TU_KEY"
       }
     }
   }
