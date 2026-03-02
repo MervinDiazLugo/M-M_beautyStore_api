@@ -6,368 +6,99 @@
     "description": "API para gestión de productos. Endpoints públicos: GET. Endpoints protegidos requieren header x-api-key."
   },
   "servers": [
-    {
-      "url": "/"
-    }
+    { "url": "/" }
   ],
   "paths": {
     "/api/items": {
       "get": {
         "summary": "Listar artículos (PÚBLICO)",
-        "security": [],
         "responses": {
           "200": {
-            "description": "Lista de artículos",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Product"
-                  }
-                }
-              }
-            }
+            "description": "Lista de artículos"
           }
         }
       },
       "post": {
         "summary": "Crear artículo",
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Product"
-              }
-            }
-          }
-        },
+        "security": [{ "ApiKeyAuth": [] }],
         "responses": {
-          "201": {
-            "description": "Creado"
-          },
-          "400": {
-            "description": "Bad request"
-          },
-          "401": {
-            "description": "API key inválida"
-          },
-          "409": {
-            "description": "ID ya existe"
-          }
+          "201": { "description": "Creado" },
+          "401": { "description": "API key requerida" }
         }
       }
     },
     "/api/items/{id}": {
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        }
-      ],
       "get": {
-        "summary": "Obtener artículo por id",
+        "summary": "Obtener artículo por ID (PÚBLICO)",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
         "responses": {
-          "200": {
-            "description": "Artículo",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Product"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "No encontrado"
-          }
+          "200": { "description": "Artículo encontrado" },
+          "404": { "description": "No encontrado" }
         }
       },
       "put": {
-        "summary": "Reemplazo completo del artículo",
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Product"
-              }
-            }
-          }
-        },
+        "summary": "Actualizar artículo completo",
+        "security": [{ "ApiKeyAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
         "responses": {
-          "200": {
-            "description": "Reemplazado"
-          },
-          "400": {
-            "description": "Bad request"
-          },
-          "401": {
-            "description": "API key inválida"
-          }
+          "200": { "description": "Actualizado" },
+          "401": { "description": "API key requerida" }
         }
       },
       "patch": {
-        "summary": "Actualización parcial del artículo",
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object"
-              }
-            }
-          }
-        },
+        "summary": "Actualizar artículo parcialmente",
+        "security": [{ "ApiKeyAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
         "responses": {
-          "200": {
-            "description": "Actualizado"
-          },
-          "401": {
-            "description": "API key inválida"
-          },
-          "404": {
-            "description": "No encontrado"
-          }
+          "200": { "description": "Actualizado" },
+          "401": { "description": "API key requerida" }
         }
       },
       "delete": {
         "summary": "Eliminar artículo",
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
+        "security": [{ "ApiKeyAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
         "responses": {
-          "204": {
-            "description": "Eliminado"
-          },
-          "401": {
-            "description": "API key inválida"
-          },
-          "404": {
-            "description": "No encontrado"
-          }
-        }
-      }
-    },
-    "/api/maintenance/ml-import": {
-      "post": {
-        "summary": "Importar productos de Mercado Libre por IDs",
-        "description": "Recibe IDs de MercadoLibre, scrapea la API de ML (autenticación OAuth automática), normaliza los datos y los guarda en la base de datos.",
-        "tags": [
-          "Maintenance"
-        ],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "ids"
-                ],
-                "properties": {
-                  "ids": {
-                    "type": "array",
-                    "description": "Lista de IDs de MercadoLibre a importar",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": [
-                      "MLA1510055959",
-                      "MLA1519662745",
-                      "MLA2305015168"
-                    ]
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Importación exitosa",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Importación completada: productos"
-                    },
-                    "results": {
-                      "type": "object",
-                      "example": {
-                        "total": 3,
-                        "success": 3,
-                        "failed": 0,
-                        "upserted": 1,
-                        "modified": 2
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "IDs inválidos o sin productos válidos"
-          },
-          "401": {
-            "description": "API key inválida"
-          },
-          "500": {
-            "description": "Error de servidor o credenciales ML faltantes"
-          }
-        }
-      }
-    },
-    "/api/maintenance/import": {
-      "post": {
-        "summary": "Importar productos JSON genérico",
-        "description": "Importa datos JSON con sanitización UTF-8 automática. Compatible con cualquier fuente.",
-        "tags": [
-          "Maintenance"
-        ],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "oneOf": [
-                  {
-                    "type": "array",
-                    "items": {
-                      "type": "object"
-                    }
-                  },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "data": {
-                        "type": "array"
-                      }
-                    }
-                  }
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Importación completada"
-          },
-          "400": {
-            "description": "Datos requeridos"
-          },
-          "401": {
-            "description": "API key inválida"
-          },
-          "500": {
-            "description": "Error servidor"
-          }
+          "204": { "description": "Eliminado" },
+          "401": { "description": "API key requerida" }
         }
       }
     },
     "/api/maintenance/health": {
       "get": {
-        "summary": "Verificar salud de BD",
-        "description": "Verifica integridad y disponibilidad de la base de datos.",
-        "tags": [
-          "Maintenance"
-        ],
+        "summary": "Verificar estado de BD (PÚBLICO)",
         "responses": {
-          "200": {
-            "description": "BD operativa",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error conexión BD"
-          }
+          "200": { "description": "BD operativa" }
+        }
+      }
+    },
+    "/api/maintenance/ml-import": {
+      "post": {
+        "summary": "Importar de MercadoLibre",
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": {
+          "200": { "description": "Importación completada" },
+          "401": { "description": "API key requerida" }
+        }
+      }
+    },
+    "/api/maintenance/import": {
+      "post": {
+        "summary": "Importar JSON genérico",
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": {
+          "200": { "description": "Importación completada" },
+          "401": { "description": "API key requerida" }
         }
       }
     },
     "/api/maintenance/cleanup": {
       "delete": {
-        "summary": "Eliminar colección completamente",
-        "description": "Hace DELETE de todos los productos. CUIDADO: Esta acción es irreversible.",
-        "tags": [
-          "Maintenance"
-        ],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
+        "summary": "Limpiar todos los productos",
+        "security": [{ "ApiKeyAuth": [] }],
         "responses": {
-          "200": {
-            "description": "Productos eliminados",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "API key inválida"
-          },
-          "500": {
-            "description": "Error al eliminar productos"
-          }
+          "200": { "description": "Limpiado" },
+          "401": { "description": "API key requerida" }
         }
       }
     }
@@ -377,102 +108,7 @@
       "ApiKeyAuth": {
         "type": "apiKey",
         "in": "header",
-        "name": "x-api-key",
-        "description": "API Key de seguridad. Agregar en header: x-api-key"
-      }
-    },
-    "schemas": {
-      "Product": {
-        "type": "object",
-        "required": [
-          "id",
-          "name",
-          "price",
-          "sku",
-          "published"
-        ],
-        "properties": {
-          "id": {
-            "type": "string",
-            "example": "MLA1510055959"
-          },
-          "name": {
-            "type": "string",
-            "example": "Serum De Pestañas"
-          },
-          "ml_price": {
-            "type": "number",
-            "example": 7105
-          },
-          "price": {
-            "type": "number",
-            "example": 6114
-          },
-          "precio_mayorista": {
-            "type": "number",
-            "example": 4891
-          },
-          "cantidad_minima_mayorista": {
-            "type": "integer",
-            "example": 18
-          },
-          "cantidad_vendida": {
-            "type": "integer",
-            "example": 1043
-          },
-          "sold_quantity_real": {
-            "type": "integer",
-            "example": 118
-          },
-          "desc": {
-            "type": "string"
-          },
-          "sku": {
-            "type": "string"
-          },
-          "image": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "envioGratis": {
-            "type": "boolean"
-          },
-          "description": {
-            "type": "string"
-          },
-          "features": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "specifications": {
-            "type": "object"
-          },
-          "mercadoLibreUrl": {
-            "type": "string"
-          },
-          "brand": {
-            "type": "string"
-          },
-          "condition": {
-            "type": "string"
-          },
-          "sold_quantity": {
-            "type": "integer"
-          },
-          "available_quantity": {
-            "type": "integer"
-          },
-          "published": {
-            "type": "boolean"
-          },
-          "permalink": {
-            "type": "string"
-          }
-        }
+        "name": "x-api-key"
       }
     }
   }
