@@ -230,8 +230,15 @@
                       "type": "string",
                       "example": "Importación completada: productos"
                     },
-                    "results": 3/3 {
-                      "type": "object"
+                    "results": {
+                      "type": "object",
+                      "example": {
+                        "total": 3,
+                        "success": 3,
+                        "failed": 0,
+                        "upserted": 1,
+                        "modified": 2
+                      }
                     }
                   }
                 }
