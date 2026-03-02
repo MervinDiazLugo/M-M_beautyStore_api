@@ -1,5 +1,6 @@
 // pages/api/items/index.js
 import { connectToDatabase } from '../../../lib/db';
+import { validateSecurityKey } from '../../../lib/auth';
 import fs from 'fs';
 import path from 'path';
 
@@ -102,6 +103,9 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'POST') {
+    const auth = validateSecurityKey(req, res);
+    if (!auth.valid) return res.status(401).json({ error: auth.error });
+    
     const body = req.body;
     if (!body || !body.id) return res.status(400).json({ error: 'id requerido' });
     const exists = await collection.findOne({ id: body.id });

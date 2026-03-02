@@ -374,6 +374,11 @@ export default async function handler(req, res) {
     });
   }
 
+  // Validar security key
+  const { validateSecurityKey } = await import('../../../lib/auth.js');
+  const auth = validateSecurityKey(req, res);
+  if (!auth.valid) return res.status(401).json({ error: auth.error });
+
   try {
     // ─── Validar credenciales ───
     if (!ML_CLIENT_ID || !ML_CLIENT_SECRET) {

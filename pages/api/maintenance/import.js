@@ -1,6 +1,7 @@
 // pages/api/maintenance/import.js
 // POST: Importar productos desde scraper de Mercado Libre
 import { connectToDatabase } from '../../../lib/db';
+import { validateSecurityKey } from '../../../lib/auth';
 
 function sanitizeObject(obj, depth = 0) {
   if (depth > 20) return obj;
@@ -31,6 +32,9 @@ export default async function handler(req, res) {
     res.setHeader('Allow', ['POST']);
     return res.status(405).json({ error: `Method ${req.method} not allowed` });
   }
+
+  const auth = validateSecurityKey(req, res);
+  if (!auth.valid) return res.status(401).json({ error: auth.error });
 
   try {
     const { db } = await connectToDatabase();

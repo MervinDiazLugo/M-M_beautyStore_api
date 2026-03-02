@@ -1,5 +1,6 @@
 // pages/api/items/[id].js
 import { connectToDatabase } from '../../../lib/db';
+import { validateSecurityKey } from '../../../lib/auth';
 
 function sanitizeString(str) {
     if (typeof str !== 'string' || !str) return str;
@@ -75,6 +76,9 @@ export default async function handler(req, res) {
 
     // PUT /api/items/:id — reemplazo completo
     if (req.method === 'PUT') {
+        const auth = validateSecurityKey(req, res);
+        if (!auth.valid) return res.status(401).json({ error: auth.error });
+        
         const body = req.body;
         if (!body || typeof body !== 'object') {
             return res.status(400).json({ error: 'Body requerido' });
@@ -88,6 +92,9 @@ export default async function handler(req, res) {
 
     // PATCH /api/items/:id — actualización parcial
     if (req.method === 'PATCH') {
+        const auth = validateSecurityKey(req, res);
+        if (!auth.valid) return res.status(401).json({ error: auth.error });
+        
         const body = req.body;
         if (!body || typeof body !== 'object') {
             return res.status(400).json({ error: 'Body requerido' });

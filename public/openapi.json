@@ -1,22 +1,27 @@
-﻿{
+{
   "openapi": "3.0.3",
   "info": {
     "title": "Products CRUD API",
     "version": "1.0.0",
-    "description": "API CRUD para arti­culos (productos). Endpoints: /api/items y /api/items/{id}"
+    "description": "API CRUD para artículos (productos). Requiere header x-api-key en operaciones de escritura."
   },
   "servers": [
     {
       "url": "/"
     }
   ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
   "paths": {
     "/api/items": {
       "get": {
-        "summary": "Listar arti­culos",
+        "summary": "Listar artículos",
         "responses": {
           "200": {
-            "description": "Lista de arti­culos",
+            "description": "Lista de artículos",
             "content": {
               "application/json": {
                 "schema": {
@@ -31,7 +36,12 @@
         }
       },
       "post": {
-        "summary": "Crear arti­culo",
+        "summary": "Crear artículo",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -48,6 +58,9 @@
           },
           "400": {
             "description": "Bad request"
+          },
+          "401": {
+            "description": "API key inválida"
           },
           "409": {
             "description": "ID ya existe"
@@ -67,10 +80,10 @@
         }
       ],
       "get": {
-        "summary": "Obtener arti­culo por id",
+        "summary": "Obtener artículo por id",
         "responses": {
           "200": {
-            "description": "Arti­culo",
+            "description": "Artículo",
             "content": {
               "application/json": {
                 "schema": {
@@ -85,7 +98,12 @@
         }
       },
       "put": {
-        "summary": "Reemplazo completo del arti­culo",
+        "summary": "Reemplazo completo del artículo",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -102,11 +120,19 @@
           },
           "400": {
             "description": "Bad request"
+          },
+          "401": {
+            "description": "API key inválida"
           }
         }
       },
       "patch": {
-        "summary": "Actualizacion parcial del arti­culo",
+        "summary": "Actualización parcial del artículo",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -121,16 +147,27 @@
           "200": {
             "description": "Actualizado"
           },
+          "401": {
+            "description": "API key inválida"
+          },
           "404": {
             "description": "No encontrado"
           }
         }
       },
       "delete": {
-        "summary": "Eliminar arti­culo",
+        "summary": "Eliminar artículo",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "responses": {
           "204": {
             "description": "Eliminado"
+          },
+          "401": {
+            "description": "API key inválida"
           },
           "404": {
             "description": "No encontrado"
@@ -141,9 +178,14 @@
     "/api/maintenance/ml-import": {
       "post": {
         "summary": "Importar productos de Mercado Libre por IDs",
-        "description": "Recibe IDs de MercadoLibre, scrapea la API de ML (autenticación OAuth automática), normaliza los datos y los guarda directamente en MongoDB.",
+        "description": "Recibe IDs de MercadoLibre, scrapea la API de ML (autenticación OAuth automática), normaliza los datos y los guarda en la base de datos.",
         "tags": [
           "Maintenance"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
         ],
         "requestBody": {
           "required": true,
@@ -186,53 +228,10 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "Importación completada: 3/3 productos"
+                      "example": "Importación completada: productos"
                     },
-                    "results": {
-                      "type": "object",
-                      "properties": {
-                        "total": {
-                          "type": "integer",
-                          "description": "Total de IDs recibidos"
-                        },
-                        "success": {
-                          "type": "integer",
-                          "description": "Productos scrapeados correctamente"
-                        },
-                        "failed": {
-                          "type": "integer",
-                          "description": "Productos que fallaron"
-                        },
-                        "upserted": {
-                          "type": "integer",
-                          "description": "Nuevos en la BD"
-                        },
-                        "modified": {
-                          "type": "integer",
-                          "description": "Actualizados en la BD"
-                        },
-                        "errors": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "string"
-                              },
-                              "error": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        },
-                        "products": {
-                          "type": "array",
-                          "description": "Productos procesados e importados",
-                          "items": {
-                            "$ref": "#/components/schemas/Product"
-                          }
-                        }
-                      }
+                    "results": 3/3 {
+                      "type": "object"
                     }
                   }
                 }
@@ -241,6 +240,9 @@
           },
           "400": {
             "description": "IDs inválidos o sin productos válidos"
+          },
+          "401": {
+            "description": "API key inválida"
           },
           "500": {
             "description": "Error de servidor o credenciales ML faltantes"
@@ -254,6 +256,11 @@
         "description": "Importa datos JSON con sanitización UTF-8 automática. Compatible con cualquier fuente.",
         "tags": [
           "Maintenance"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
         ],
         "requestBody": {
           "required": true,
@@ -287,6 +294,9 @@
           "400": {
             "description": "Datos requeridos"
           },
+          "401": {
+            "description": "API key inválida"
+          },
           "500": {
             "description": "Error servidor"
           }
@@ -306,21 +316,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string"
-                    },
-                    "database": {
-                      "type": "string"
-                    },
-                    "collection": {
-                      "type": "string"
-                    },
-                    "count": {
-                      "type": "integer"
-                    }
-                  }
+                  "type": "object"
                 }
               }
             }
@@ -334,13 +330,18 @@
     "/api/maintenance/cleanup": {
       "delete": {
         "summary": "Eliminar colección completamente",
-        "description": "Hace DROP completo de la colección 'products'. CUIDADO: Esta acción es irreversible.",
+        "description": "Hace DELETE de todos los productos. CUIDADO: Esta acción es irreversible.",
         "tags": [
           "Maintenance"
         ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Colección eliminada",
+            "description": "Productos eliminados",
             "content": {
               "application/json": {
                 "schema": {
@@ -351,32 +352,41 @@
                       "example": true
                     },
                     "message": {
-                      "type": "string",
-                      "example": "Colección \"products\" eliminada completamente"
-                    },
-                    "note": {
-                      "type": "string",
-                      "example": "La próxima importación creará la colección limpia"
+                      "type": "string"
                     }
                   }
                 }
               }
             }
           },
+          "401": {
+            "description": "API key inválida"
+          },
           "500": {
-            "description": "Error al eliminar colección"
+            "description": "Error al eliminar productos"
           }
         }
       }
     }
   },
   "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key",
+        "description": "API Key de seguridad. Obtener de las variables de entorno."
+      }
+    },
     "schemas": {
       "Product": {
         "type": "object",
         "required": [
           "id",
-          "name"
+          "name",
+          "price",
+          "sku",
+          "published"
         ],
         "properties": {
           "id": {
@@ -385,7 +395,7 @@
           },
           "name": {
             "type": "string",
-            "example": "Serum De Pestai±as Crecimiento Y Nutricion Bioaqua"
+            "example": "Serum De Pestañas"
           },
           "ml_price": {
             "type": "number",
@@ -436,10 +446,7 @@
             }
           },
           "specifications": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            }
+            "type": "object"
           },
           "mercadoLibreUrl": {
             "type": "string"
