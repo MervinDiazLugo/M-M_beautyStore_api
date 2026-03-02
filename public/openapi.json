@@ -21,6 +21,24 @@
       "post": {
         "summary": "Crear artículo",
         "security": [{ "ApiKeyAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "string" },
+                  "name": { "type": "string" },
+                  "price": { "type": "number" },
+                  "sku": { "type": "string" },
+                  "published": { "type": "boolean" }
+                },
+                "required": ["id", "name", "price", "sku", "published"]
+              }
+            }
+          }
+        },
         "responses": {
           "201": { "description": "Creado" },
           "401": { "description": "API key requerida" }
@@ -40,6 +58,14 @@
         "summary": "Actualizar artículo completo",
         "security": [{ "ApiKeyAuth": [] }],
         "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
         "responses": {
           "200": { "description": "Actualizado" },
           "401": { "description": "API key requerida" }
@@ -49,6 +75,14 @@
         "summary": "Actualizar artículo parcialmente",
         "security": [{ "ApiKeyAuth": [] }],
         "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
         "responses": {
           "200": { "description": "Actualizado" },
           "401": { "description": "API key requerida" }
@@ -76,6 +110,23 @@
       "post": {
         "summary": "Importar de MercadoLibre",
         "security": [{ "ApiKeyAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "example": ["MLA1510055959", "MLA1519662745"]
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": { "description": "Importación completada" },
           "401": { "description": "API key requerida" }
@@ -86,6 +137,19 @@
       "post": {
         "summary": "Importar JSON genérico",
         "security": [{ "ApiKeyAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  { "type": "array" },
+                  { "type": "object", "properties": { "data": { "type": "array" } } }
+                ]
+              }
+            }
+          }
+        },
         "responses": {
           "200": { "description": "Importación completada" },
           "401": { "description": "API key requerida" }
