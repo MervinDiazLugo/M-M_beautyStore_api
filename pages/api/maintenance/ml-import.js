@@ -504,6 +504,12 @@ export default async function handler(req, res) {
     let modified = 0;
     for (const p of validProducts) {
       try {
+        // Preservar instagramReel existente
+        const existing = await collection.findOne({ id: p.id });
+        if (existing && existing.instagramReel) {
+          p.instagramReel = existing.instagramReel;
+        }
+        
         const result = await collection.replaceOne({ id: p.id }, p, { upsert: true });
         if (result.upsertedCount) inserted++;
         if (result.modifiedCount) modified++;

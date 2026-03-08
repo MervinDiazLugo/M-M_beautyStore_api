@@ -83,8 +83,13 @@ export default async function handler(req, res) {
         if (!body || typeof body !== 'object') {
             return res.status(400).json({ error: 'Body requerido' });
         }
-        // Return what we received for debugging
-        console.log('PUT body received:', JSON.stringify(body));
+        
+        // Preservar instagramReel existente si no viene en el body
+        const existing = await collection.findOne({ id });
+        if (existing && existing.instagramReel && !body.instagramReel) {
+            body.instagramReel = existing.instagramReel;
+        }
+        
         body.id = id;
         await collection.replaceOne({ id }, body, { upsert: true });
         return res.status(200).json({ success: true, received: body });
