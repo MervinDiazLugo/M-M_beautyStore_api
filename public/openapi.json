@@ -32,7 +32,8 @@
                   "name": { "type": "string" },
                   "price": { "type": "number" },
                   "sku": { "type": "string" },
-                  "published": { "type": "boolean" }
+                  "published": { "type": "boolean" },
+                  "instagramReel": { "type": "string", "description": "Link de Instagram Reel (opcional)" }
                 },
                 "required": ["id", "name", "price", "sku", "published"]
               }
